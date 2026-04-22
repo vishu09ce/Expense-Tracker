@@ -3,5 +3,6 @@
  * Import from '../hooks' rather than individual hook files.
  */
 
-export { useExpenses } from './useExpenses';
-export { useFilters }  from './useFilters';
+export { useExpenses }  from './useExpenses';
+export { useFilters }   from './useFilters';
+export { useDashboard } from './useDashboard';

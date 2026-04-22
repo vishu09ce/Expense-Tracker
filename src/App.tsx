@@ -2,13 +2,13 @@
  * App.tsx — Root component and application shell.
  *
  * Responsibilities:
- *   - Compose the top-level layout: header, filters, expense list
- *   - Own UI state for the add/edit modal and delete confirmation dialog
+ *   - Top-level layout: sticky header with tab navigation, main content area
+ *   - Tab state: "Dashboard" vs "Expenses" views
+ *   - UI state: add/edit modal, delete confirmation dialog
  *   - Bridge user actions to useExpenses and useFilters hooks
  *
- * This component is intentionally thin — all data and filter logic live in
- * hooks; all rendering is delegated to feature components (Single Responsibility).
- * The dashboard will be added in Phase 5 without restructuring this file.
+ * The dashboard always receives the full expense list (not the filtered list)
+ * because totals and charts should reflect all-time data regardless of active filters.
  */
 
 import { useState } from 'react';
@@ -17,24 +17,27 @@ import { useExpenses, useFilters } from './hooks';
 import { Button, Modal, ConfirmDialog } from './components/common';
 import { ExpenseList, ExpenseForm } from './components/expenses';
 import { FilterPanel } from './components/filters';
+import { Dashboard } from './components/dashboard';
+
+/** The two top-level views in the application. */
+type ActiveView = 'dashboard' | 'expenses';
 
 function App() {
-  const { expenses, addExpense, editExpense, removeExpense, getFilteredExpenses } = useExpenses();
+  const { expenses, addExpense, editExpense, removeExpense, getFilteredExpenses } =
+    useExpenses();
   const { filters, hasActiveFilters, setFilter, clearFilters } = useFilters();
 
-  // Which expense is currently being edited (null = add mode)
+  // Which tab is currently shown
+  const [activeView, setActiveView] = useState<ActiveView>('dashboard');
+
+  // Which expense is being edited (null = add mode)
   const [editingExpense, setEditingExpense] = useState<Expense | null>(null);
+  const [showForm, setShowForm]             = useState(false);
 
-  // Controls visibility of the add/edit form modal
-  const [showForm, setShowForm] = useState(false);
-
-  // The expense staged for deletion — drives the confirmation dialog (FR-03)
+  // Expense staged for deletion — drives the confirmation dialog (FR-03)
   const [deletingExpense, setDeletingExpense] = useState<Expense | null>(null);
 
-  /**
-   * The list that drives the ExpenseList component.
-   * When no filters are active we skip the filtering pass entirely for efficiency.
-   */
+  /** Apply filters only when at least one is active — avoids an unnecessary array pass. */
   const displayedExpenses = hasActiveFilters
     ? getFilteredExpenses(filters)
     : expenses;
@@ -81,79 +84,98 @@ function App() {
   return (
     <div className="min-h-screen bg-gray-50">
 
-      {/* ── Navigation bar ── */}
+      {/* ── Sticky header with branding + tab nav + primary action ── */}
       <header className="bg-white border-b border-gray-200 sticky top-0 z-10">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            {/* Wallet icon */}
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="22"
-              height="22"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="#4f46e5"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              aria-hidden="true"
-            >
-              <rect x="1" y="4" width="22" height="16" rx="2" ry="2" />
-              <line x1="1" y1="10" x2="23" y2="10" />
-            </svg>
-            <span className="text-lg font-bold text-gray-900 tracking-tight">
-              Expense Tracker
-            </span>
+        <div className="max-w-5xl mx-auto px-4 sm:px-6">
+
+          {/* Top row: logo + Add button */}
+          <div className="flex items-center justify-between py-3">
+            <div className="flex items-center gap-2">
+              {/* Wallet icon */}
+              <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24"
+                fill="none" stroke="#4f46e5" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
+                aria-hidden="true">
+                <rect x="1" y="4" width="22" height="16" rx="2" ry="2" />
+                <line x1="1" y1="10" x2="23" y2="10" />
+              </svg>
+              <span className="text-lg font-bold text-gray-900 tracking-tight">
+                Expense Tracker
+              </span>
+            </div>
+
+            <Button variant="primary" onClick={handleAddClick}>
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
+                fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"
+                aria-hidden="true">
+                <line x1="12" y1="5" x2="12" y2="19" />
+                <line x1="5" y1="12" x2="19" y2="12" />
+              </svg>
+              Add Expense
+            </Button>
           </div>
 
-          <Button variant="primary" onClick={handleAddClick}>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="16"
-              height="16"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2.5"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              aria-hidden="true"
-            >
-              <line x1="12" y1="5" x2="12" y2="19" />
-              <line x1="5" y1="12" x2="19" y2="12" />
-            </svg>
-            Add Expense
-          </Button>
+          {/* Tab navigation row */}
+          <nav className="flex gap-1 -mb-px" aria-label="Main navigation">
+            {(
+              [
+                { id: 'dashboard', label: 'Dashboard' },
+                { id: 'expenses',  label: 'Expenses'  },
+              ] as { id: ActiveView; label: string }[]
+            ).map(({ id, label }) => (
+              <button
+                key={id}
+                onClick={() => setActiveView(id)}
+                aria-current={activeView === id ? 'page' : undefined}
+                className={[
+                  'px-4 py-2.5 text-sm font-medium border-b-2 transition-colors focus:outline-none',
+                  activeView === id
+                    ? 'border-indigo-600 text-indigo-600'
+                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300',
+                ].join(' ')}
+              >
+                {label}
+              </button>
+            ))}
+          </nav>
         </div>
       </header>
 
-      {/* ── Main content ── */}
+      {/* ── Main content area ── */}
       <main className="max-w-5xl mx-auto px-4 sm:px-6 py-8">
 
-        {/* Section header */}
-        <div className="flex items-center justify-between mb-4">
-          <h1 className="text-xl font-semibold text-gray-900">Expenses</h1>
-          <span className="text-sm text-gray-400">
-            {expenses.length} {expenses.length === 1 ? 'record' : 'records'} total
-          </span>
-        </div>
+        {/* Dashboard tab (FR-15–FR-19) */}
+        {activeView === 'dashboard' && (
+          <Dashboard expenses={expenses} />
+        )}
 
-        {/* Filter panel — always visible so controls are discoverable (FR-10–FR-14) */}
-        <FilterPanel
-          filters={filters}
-          onChange={setFilter}
-          onClear={clearFilters}
-          hasActiveFilters={hasActiveFilters}
-          resultCount={displayedExpenses.length}
-          totalCount={expenses.length}
-        />
+        {/* Expenses tab */}
+        {activeView === 'expenses' && (
+          <>
+            <div className="flex items-center justify-between mb-4">
+              <h1 className="text-xl font-semibold text-gray-900">Expenses</h1>
+              <span className="text-sm text-gray-400">
+                {expenses.length} {expenses.length === 1 ? 'record' : 'records'} total
+              </span>
+            </div>
 
-        {/* Expense list — shows filtered or full list depending on filter state */}
-        <ExpenseList
-          expenses={displayedExpenses}
-          onEdit={handleEditClick}
-          onDelete={handleDeleteClick}
-        />
+            {/* Filters (FR-10–FR-14) */}
+            <FilterPanel
+              filters={filters}
+              onChange={setFilter}
+              onClear={clearFilters}
+              hasActiveFilters={hasActiveFilters}
+              resultCount={displayedExpenses.length}
+              totalCount={expenses.length}
+            />
+
+            {/* Expense list */}
+            <ExpenseList
+              expenses={displayedExpenses}
+              onEdit={handleEditClick}
+              onDelete={handleDeleteClick}
+            />
+          </>
+        )}
       </main>
 
       {/* ── Add / Edit modal ── */}
@@ -169,7 +191,7 @@ function App() {
         />
       </Modal>
 
-      {/* ── Delete confirmation dialog (FR-03) ── */}
+      {/* ── Delete confirmation (FR-03) ── */}
       <ConfirmDialog
         isOpen={Boolean(deletingExpense)}
         title="Delete Expense"

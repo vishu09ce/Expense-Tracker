@@ -5,3 +5,4 @@
 
 export * from './dateUtils';
 export * from './categoryUtils';
+export * from './dashboardUtils';
