@@ -20,6 +20,12 @@ import { FilterPanel } from './components/filters';
 import { Dashboard } from './components/dashboard';
 import { exportExpensesToCSV } from './utils';
 
+/*
+ * Dev-only imports — tree-shaken out of the production bundle because the
+ * import.meta.env.DEV guard evaluates to false at build time.
+ */
+import { seedTestData, clearAllData } from './utils/seedData';
+
 /** The two top-level views in the application. */
 type ActiveView = 'dashboard' | 'expenses';
 
@@ -236,6 +242,42 @@ function App() {
         onConfirm={handleDeleteConfirm}
         onCancel={() => setDeletingExpense(null)}
       />
+
+      {/*
+        ── Dev toolbar — only rendered in development builds (import.meta.env.DEV).
+        Vite replaces this condition with `false` during `npm run build` so the
+        toolbar and seedData module are completely excluded from the production bundle.
+      */}
+      {import.meta.env.DEV && (
+        <div
+          className="fixed bottom-4 right-4 z-50 flex items-center gap-2
+            bg-amber-50 border border-amber-300 rounded-lg px-3 py-2 shadow-lg"
+          role="region"
+          aria-label="Developer testing toolbar"
+        >
+          {/* Label — makes the toolbar's purpose unambiguous to any tester */}
+          <span className="text-xs font-semibold text-amber-700 mr-1">DEV</span>
+
+          <button
+            onClick={seedTestData}
+            className="px-3 py-1.5 text-xs font-medium bg-amber-500 text-white
+              rounded hover:bg-amber-600 transition-colors focus:outline-none focus:ring-2 focus:ring-amber-400"
+            title="Populate localStorage with 30 test expenses covering all RTM scenarios, then reload"
+          >
+            Load Test Data
+          </button>
+
+          <button
+            onClick={clearAllData}
+            className="px-3 py-1.5 text-xs font-medium bg-white text-amber-700
+              border border-amber-300 rounded hover:bg-amber-100 transition-colors
+              focus:outline-none focus:ring-2 focus:ring-amber-400"
+            title="Wipe all expense data from localStorage and reload to a blank state"
+          >
+            Clear All
+          </button>
+        </div>
+      )}
     </div>
   );
 }
