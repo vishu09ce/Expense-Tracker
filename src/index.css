@@ -1,0 +1,110 @@
+/* Entry point for all global styles. Tailwind v4 is imported here and extended via @theme. */
+@import "tailwindcss";
+
+/*
+  Design token layer — all theme-sensitive values live here as CSS variables.
+  This structure is intentional: swapping to dark mode in a future release means
+  overriding these variables inside a `.dark` selector, with zero changes to components.
+  See NFR-15 in the requirements document.
+*/
+@theme {
+  /* --- Brand / Primary --- */
+  --color-primary:         #4f46e5; /* indigo-600 — primary actions (buttons, links) */
+  --color-primary-hover:   #4338ca; /* indigo-700 — hover state for primary actions */
+  --color-primary-light:   #eef2ff; /* indigo-50  — subtle primary backgrounds */
+
+  /* --- Backgrounds --- */
+  --color-bg:              #f9fafb; /* gray-50  — overall app background */
+  --color-surface:         #ffffff; /* white    — cards, modals, form panels */
+  --color-surface-raised:  #f3f4f6; /* gray-100 — slightly elevated surfaces */
+
+  /* --- Borders --- */
+  --color-border:          #e5e7eb; /* gray-200 — default borders and dividers */
+  --color-border-strong:   #d1d5db; /* gray-300 — stronger borders (focused inputs) */
+
+  /* --- Text --- */
+  --color-text-primary:    #111827; /* gray-900 — headings and primary body text */
+  --color-text-secondary:  #6b7280; /* gray-500 — supporting text and labels */
+  --color-text-muted:      #9ca3af; /* gray-400 — placeholders and disabled text */
+  --color-text-inverse:    #ffffff; /* white    — text on dark/primary backgrounds */
+
+  /* --- Semantic states --- */
+  --color-danger:          #ef4444; /* red-500  — destructive actions and errors */
+  --color-danger-hover:    #dc2626; /* red-600  — hover for destructive actions */
+  --color-danger-light:    #fef2f2; /* red-50   — danger backgrounds */
+  --color-success:         #10b981; /* emerald-500 — success states */
+  --color-success-light:   #ecfdf5; /* emerald-50  — success backgrounds */
+  --color-warning:         #f59e0b; /* amber-500   — warning states */
+  --color-warning-light:   #fffbeb; /* amber-50    — warning backgrounds */
+
+  /* --- Category colours (used in chart, badges, and indicators) --- */
+  /* Each category has a full colour and a light tint for badge backgrounds */
+  --color-cat-food:               #f59e0b; /* amber-500  */
+  --color-cat-food-light:         #fffbeb; /* amber-50   */
+  --color-cat-transportation:     #3b82f6; /* blue-500   */
+  --color-cat-transportation-light: #eff6ff; /* blue-50  */
+  --color-cat-entertainment:      #8b5cf6; /* violet-500 */
+  --color-cat-entertainment-light: #f5f3ff; /* violet-50 */
+  --color-cat-shopping:           #ec4899; /* pink-500   */
+  --color-cat-shopping-light:     #fdf2f8; /* pink-50    */
+  --color-cat-bills:              #ef4444; /* red-500    */
+  --color-cat-bills-light:        #fef2f2; /* red-50     */
+  --color-cat-other:              #6b7280; /* gray-500   */
+  --color-cat-other-light:        #f9fafb; /* gray-50    */
+
+  /* --- Shadows --- */
+  --shadow-sm:   0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow-md:   0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  --shadow-lg:   0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+
+  /* --- Typography --- */
+  --font-sans: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+
+  /* --- Border radius --- */
+  --radius-sm:   0.25rem;  /* 4px  */
+  --radius-md:   0.5rem;   /* 8px  */
+  --radius-lg:   0.75rem;  /* 12px */
+  --radius-xl:   1rem;     /* 16px */
+}
+
+/*
+  FUTURE DARK MODE HOOK — NFR-15
+  When dark mode is introduced, override every token above inside this selector.
+  Components need zero changes because they reference variables, not hardcoded values.
+
+  .dark {
+    --color-bg:             #0f172a;
+    --color-surface:        #1e293b;
+    --color-text-primary:   #f1f5f9;
+    ... etc
+  }
+*/
+
+/* --- Base resets and document defaults --- */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  font-family: var(--font-sans);
+  font-size: 16px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  color: var(--color-text-primary);
+  background-color: var(--color-bg);
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+}
+
+#root {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
