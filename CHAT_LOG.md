@@ -18,12 +18,12 @@ Phased approach confirmed with user:
 
 | Phase | Description | Status |
 |-------|-------------|--------|
-| 1 | Project Scaffold (Vite + React + TS + Tailwind, folder structure, CSS vars) | Pending |
-| 2 | Core Data Layer (types, storage service interface + localStorage impl, hooks) | Pending |
-| 3 | Expense CRUD UI (list, add/edit form, delete confirmation, recurring indicator) | Pending |
-| 4 | Filters & Search (date range, category, description — combinable + clearable) | Pending |
-| 5 | Dashboard (summary cards, spending chart via Recharts) | Pending |
-| 6 | CSV Export & Recurring Auto-generation | Pending |
+| 1 | Project Scaffold (Vite + React + TS + Tailwind, folder structure, CSS vars) | ✅ Complete |
+| 2 | Core Data Layer (types, storage service interface + localStorage impl, hooks) | ✅ Complete |
+| 3 | Expense CRUD UI (list, add/edit form, delete confirmation, recurring indicator) | ✅ Complete |
+| 4 | Filters & Search (date range, category, description — combinable + clearable) | ✅ Complete |
+| 5 | Dashboard (summary cards, spending chart via Recharts) | ✅ Complete |
+| 6 | CSV Export & Recurring Auto-generation | ✅ Complete |
 
 ### Key Decisions Recorded
 - **Tech stack:** React + Vite + TypeScript + Tailwind CSS
@@ -134,6 +134,12 @@ Section 9.1 of `testing-strategy.md` is blank — Claude Code must fill it in af
 | 6 | Session start | Created RTM.md — 44 requirements pre-populated with risk class, test type, test case, and acceptance criterion; Results blank pending implementation |
 | 7 | Pre-Phase 1 | User explicitly confirmed: SOLID principles required throughout all code and architecture; all code must have meaningful comments explaining intent (not just what the code does) |
 | 8 | Pre-Phase 1 | Branching strategy confirmed: main + one feature branch per phase (feature/project-scaffold, feature/data-layer, feature/expense-crud, feature/filters-search, feature/dashboard, feature/export-recurring); no direct commits to main |
+| 9  | Phase 1 ✅ | Project scaffold complete: Vite + React + TS + Tailwind installed; vite.config.ts configured; index.css design token system with dark mode hook (NFR-15); src folder architecture created (types/, services/, hooks/, utils/, components/{common,expenses,dashboard,filters}/); App.tsx and main.tsx cleaned up; build passes; feature/project-scaffold merged to main |
+| 10 | Phase 2 ✅ | Data layer complete: Expense/Category/Frequency types (const-object pattern — erasableSyntaxOnly compliant); ExpenseFilters; IStorageService interface (DIP); LocalStorageService (single STORAGE_KEY, safe parse, immutable guards); storageService singleton typed as interface; useExpenses hook (lazy init, CRUD, client-side filter with AND logic); feature/data-layer merged to main |
+| 11 | Phase 3 ✅ | Expense CRUD UI complete: dateUtils/categoryUtils; Button/Modal/ConfirmDialog; RecurringBadge; ExpenseForm (create/edit, full validation, nextOccurrence calc); ExpenseRow (hover actions); ExpenseList (sorted, empty state); feature/expense-crud merged |
+| 12 | Phase 4 ✅ | Filters & Search complete: useFilters hook; FilterPanel (date range, category, search, clear, aria-live count); feature/filters-search merged |
+| 13 | Phase 5 ✅ | Dashboard complete: dashboardUtils; useDashboard (useMemo); SummaryCard; SpendingChart (Recharts); CategoryBreakdown; tab nav in App.tsx; feature/dashboard merged |
+| 14 | Phase 6 ✅ | CSV export (RFC 4180, date/amount/category/description, dated filename) + recurring auto-generation (while-loop multi-period catch-up, single saveAll write, called synchronously in useExpenses lazy init); feature/export-recurring merged — ALL 6 PHASES COMPLETE |: dashboardUtils (pure fns); useDashboard (useMemo); SummaryCard; SpendingChart (Recharts BarChart, aria role, empty state); CategoryBreakdown (progress bars, aria-valuenow); Dashboard compositor; tab nav in App.tsx; feature/dashboard merged |: useFilters hook (partial merge, auto-strip empty values, clearFilters); FilterPanel (date range with cross-constraints, category dropdown, description search, clear button, aria-live result count); App.tsx wired; feature/filters-search merged to main |: dateUtils/categoryUtils; Button/Modal/ConfirmDialog common components; RecurringBadge (icon+text, NFR-10); ExpenseForm (create/edit, full validation, nextOccurrence auto-calc); ExpenseRow (hover actions, aria-labels); ExpenseList (sorted newest-first, empty state); App.tsx wired; build passes, dev server confirmed; feature/expense-crud merged to main | Data layer complete: Expense/Category/Frequency types (const-object pattern — erasableSyntaxOnly compliant); ExpenseFilters; IStorageService interface (DIP); LocalStorageService (single STORAGE_KEY, safe parse, immutable guards); storageService singleton typed as interface; useExpenses hook (lazy init, CRUD, client-side filter with AND logic); feature/data-layer merged to main |
 
 ---
 
