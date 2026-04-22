@@ -2,23 +2,25 @@
  * App.tsx — Root component and application shell.
  *
  * Responsibilities:
- *   - Compose the top-level layout: header, main content area
- *   - Own the UI state for the add/edit form modal and delete confirmation dialog
- *   - Bridge user actions (add, edit, delete) to the useExpenses hook
+ *   - Compose the top-level layout: header, filters, expense list
+ *   - Own UI state for the add/edit modal and delete confirmation dialog
+ *   - Bridge user actions to useExpenses and useFilters hooks
  *
- * This component is intentionally thin — it delegates all data logic to
- * useExpenses and all rendering to feature components (Single Responsibility).
- * Filters and the dashboard will be added in later phases without restructuring this file.
+ * This component is intentionally thin — all data and filter logic live in
+ * hooks; all rendering is delegated to feature components (Single Responsibility).
+ * The dashboard will be added in Phase 5 without restructuring this file.
  */
 
 import { useState } from 'react';
 import type { Expense, CreateExpenseInput } from './types';
-import { useExpenses } from './hooks';
+import { useExpenses, useFilters } from './hooks';
 import { Button, Modal, ConfirmDialog } from './components/common';
 import { ExpenseList, ExpenseForm } from './components/expenses';
+import { FilterPanel } from './components/filters';
 
 function App() {
-  const { expenses, addExpense, editExpense, removeExpense } = useExpenses();
+  const { expenses, addExpense, editExpense, removeExpense, getFilteredExpenses } = useExpenses();
+  const { filters, hasActiveFilters, setFilter, clearFilters } = useFilters();
 
   // Which expense is currently being edited (null = add mode)
   const [editingExpense, setEditingExpense] = useState<Expense | null>(null);
@@ -26,51 +28,55 @@ function App() {
   // Controls visibility of the add/edit form modal
   const [showForm, setShowForm] = useState(false);
 
-  // The expense staged for deletion — driving the confirmation dialog (FR-03)
+  // The expense staged for deletion — drives the confirmation dialog (FR-03)
   const [deletingExpense, setDeletingExpense] = useState<Expense | null>(null);
 
-  /** Open the form in add mode. */
+  /**
+   * The list that drives the ExpenseList component.
+   * When no filters are active we skip the filtering pass entirely for efficiency.
+   */
+  const displayedExpenses = hasActiveFilters
+    ? getFilteredExpenses(filters)
+    : expenses;
+
+  // ── Event handlers ──────────────────────────────────────────────────────────
+
   function handleAddClick() {
     setEditingExpense(null);
     setShowForm(true);
   }
 
-  /** Open the form pre-filled with the selected expense. */
   function handleEditClick(expense: Expense) {
     setEditingExpense(expense);
     setShowForm(true);
   }
 
-  /** Stage an expense for deletion — shows the confirmation dialog. */
   function handleDeleteClick(expense: Expense) {
     setDeletingExpense(expense);
   }
 
-  /** Called when the form is submitted with valid data. */
   function handleFormSave(data: CreateExpenseInput) {
     if (editingExpense) {
-      // Edit mode — pass the full data object as UpdateExpenseInput
       editExpense(editingExpense.id, data);
     } else {
-      // Add mode — create a new record
       addExpense(data);
     }
     handleFormClose();
   }
 
-  /** Reset form state and close the modal. */
   function handleFormClose() {
     setShowForm(false);
     setEditingExpense(null);
   }
 
-  /** Confirmed deletion — remove the expense and close the dialog. */
   function handleDeleteConfirm() {
     if (deletingExpense) {
       removeExpense(deletingExpense.id);
       setDeletingExpense(null);
     }
   }
+
+  // ── Render ──────────────────────────────────────────────────────────────────
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -100,9 +106,7 @@ function App() {
             </span>
           </div>
 
-          {/* Primary action — always visible in the header for quick access */}
           <Button variant="primary" onClick={handleAddClick}>
-            {/* Plus icon */}
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="16"
@@ -134,9 +138,19 @@ function App() {
           </span>
         </div>
 
-        {/* Expense list — filters will be inserted above this in Phase 4 */}
+        {/* Filter panel — always visible so controls are discoverable (FR-10–FR-14) */}
+        <FilterPanel
+          filters={filters}
+          onChange={setFilter}
+          onClear={clearFilters}
+          hasActiveFilters={hasActiveFilters}
+          resultCount={displayedExpenses.length}
+          totalCount={expenses.length}
+        />
+
+        {/* Expense list — shows filtered or full list depending on filter state */}
         <ExpenseList
-          expenses={expenses}
+          expenses={displayedExpenses}
           onEdit={handleEditClick}
           onDelete={handleDeleteClick}
         />

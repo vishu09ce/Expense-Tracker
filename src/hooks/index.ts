@@ -4,3 +4,4 @@
  */
 
 export { useExpenses } from './useExpenses';
+export { useFilters }  from './useFilters';
