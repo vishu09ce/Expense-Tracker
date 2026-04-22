@@ -13,14 +13,21 @@
 import { useState, useCallback } from 'react';
 import type { Expense, CreateExpenseInput, UpdateExpenseInput, ExpenseFilters } from '../types';
 import { storageService } from '../services';
+import { processRecurringExpenses } from '../utils/recurringUtils';
 
 export function useExpenses() {
   /**
-   * Load all expenses from storage once on mount.
-   * The lazy initialiser function runs only on the first render, so subsequent
-   * re-renders do not read from localStorage unnecessarily.
+   * Initialise state from storage on first render.
+   *
+   * Before loading, processRecurringExpenses runs synchronously to generate any
+   * instances that became due since the app was last opened (FR-25). Because
+   * localStorage is synchronous, the updated list is immediately available for
+   * getAll() to return — no extra re-render or useEffect is needed.
    */
-  const [expenses, setExpenses] = useState<Expense[]>(() => storageService.getAll());
+  const [expenses, setExpenses] = useState<Expense[]>(() => {
+    processRecurringExpenses(storageService); // generate overdue instances in-place
+    return storageService.getAll();
+  });
 
   /**
    * Re-read from storage and push the latest data into React state.

@@ -18,6 +18,7 @@ import { Button, Modal, ConfirmDialog } from './components/common';
 import { ExpenseList, ExpenseForm } from './components/expenses';
 import { FilterPanel } from './components/filters';
 import { Dashboard } from './components/dashboard';
+import { exportExpensesToCSV } from './utils';
 
 /** The two top-level views in the application. */
 type ActiveView = 'dashboard' | 'expenses';
@@ -153,9 +154,40 @@ function App() {
           <>
             <div className="flex items-center justify-between mb-4">
               <h1 className="text-xl font-semibold text-gray-900">Expenses</h1>
-              <span className="text-sm text-gray-400">
-                {expenses.length} {expenses.length === 1 ? 'record' : 'records'} total
-              </span>
+
+              <div className="flex items-center gap-3">
+                <span className="text-sm text-gray-400">
+                  {expenses.length} {expenses.length === 1 ? 'record' : 'records'} total
+                </span>
+
+                {/* CSV export — always exports the full list, not just filtered results (FR-20) */}
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  onClick={() => exportExpensesToCSV(expenses)}
+                  aria-label="Export all expenses to a CSV file"
+                  disabled={expenses.length === 0}
+                >
+                  {/* Download icon */}
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="14"
+                    height="14"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    aria-hidden="true"
+                  >
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                    <polyline points="7 10 12 15 17 10" />
+                    <line x1="12" y1="15" x2="12" y2="3" />
+                  </svg>
+                  Export CSV
+                </Button>
+              </div>
             </div>
 
             {/* Filters (FR-10–FR-14) */}
