@@ -132,6 +132,8 @@ Section 9.1 of `testing-strategy.md` is blank — Claude Code must fill it in af
 | 4 | Session start | Appended full context, requirements summary, and pre-established decisions |
 | 5 | Session start | Read and analyzed testing-strategy.md; classified all requirements into HPR/NHPR |
 | 6 | Session start | Created RTM.md — 44 requirements pre-populated with risk class, test type, test case, and acceptance criterion; Results blank pending implementation |
+| 7 | Pre-Phase 1 | User explicitly confirmed: SOLID principles required throughout all code and architecture; all code must have meaningful comments explaining intent (not just what the code does) |
+| 8 | Pre-Phase 1 | Branching strategy confirmed: main + one feature branch per phase (feature/project-scaffold, feature/data-layer, feature/expense-crud, feature/filters-search, feature/dashboard, feature/export-recurring); no direct commits to main |
 
 ---
 
