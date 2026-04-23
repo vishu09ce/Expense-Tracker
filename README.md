@@ -177,58 +177,13 @@ The Requirements Traceability Matrix (RTM) serves as the final evidence of the T
 
 ---
 
-## Tech Stack
+## Section 5: Project Documentation
 
-| Layer | Technology |
-|-------|------------|
-| Framework | React 19 + Vite 8 |
-| Language | TypeScript |
-| Styling | Tailwind CSS v4 |
-| Charts | Recharts |
-| Storage | localStorage (browser-native) |
-| Deployment | GitHub Pages |
+All supporting documents produced as part of this PoC are catalogued below in SDLC order.
 
----
-
-## Features
-
-- Add, edit, and delete expenses with date, amount, category, and description
-- Six categories: Food, Transportation, Entertainment, Shopping, Bills, Other
-- Filter and search by date range, category, and keyword — all criteria combined with AND logic
-- Dashboard with all-time total, current month total, spending-over-time bar chart, and category breakdown
-- Recurring expenses with Weekly / Monthly / Annual frequencies — overdue instances auto-generated on every page load
-- CSV export of the full expense history with a date-stamped filename
-- Demo data auto-seeded on first visit so new users land on a populated dashboard
-
----
-
-## Local Development
-
-```bash
-npm install
-npm run dev       # start dev server at http://localhost:5173
-npm run build     # production build
-npm run preview   # preview production build locally
-```
-
-The dev toolbar (bottom-right corner) provides **Load Test Data** and **Clear All** buttons for testing. It is stripped from the production bundle at build time.
-
----
-
-## Deployment
-
-```bash
-npm run deploy
-```
-
-Runs `npm run build` then publishes `dist/` to the `gh-pages` branch via the `gh-pages` package. GitHub Pages serves from that branch at https://vishu09ce.github.io/Expense-Tracker/.
-
----
-
-## Project Docs
-
-| Document | Description |
-|----------|-------------|
-| [RTM.md](RTM.md) | Requirements Traceability Matrix — all 53 requirements with test results |
-| [docs/TESTING_STRATEGY.md](docs/TESTING_STRATEGY.md) | Testing strategy — risk classification, test types, quality gates |
-| [docs/COMPONENT_TREE.md](docs/COMPONENT_TREE.md) | Full React component tree with props and responsibilities |
+| # | SDLC Phase | Document | Description |
+|---|------------|----------|-------------|
+| 1 | Requirements & Planning | [Requirements Document](REQUIREMENTS.md) | Functional and non-functional requirements, data model, and future considerations |
+| 2 | Design & Architecture | [Component Tree](docs/COMPONENT_TREE.md) | Full React component hierarchy with props and hook usage |
+| 3 | Test Planning | [Testing Strategy](docs/TESTING_STRATEGY.md) | Risk classification, test types, coverage requirements, and quality gates |
+| 4 | Test Execution & Verification | [Requirements Traceability Matrix](RTM.md) | All 53 requirements mapped to test cases and verified results |
