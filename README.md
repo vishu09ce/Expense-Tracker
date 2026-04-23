@@ -50,9 +50,11 @@ Instead of traditional coding, this PoC was built using an Agentic Workflow. The
 
 ---
 
-## Architecture
+## Section 2: System Architecture & Data Flow
 
-The app is structured in three layers following SOLID principles. The key design decision is **Dependency Inversion at the storage boundary** — the hook layer depends on an interface (`IStorageService`), not on `LocalStorageService` directly. Swapping localStorage for a REST API requires only a new implementation class; no hooks or components change.
+This section visualizes the structural integrity and data handling of the application. The architecture was orchestrated using SOLID principles to ensure the codebase remains modular, easy to audit, and resistant to regression during updates.
+
+### System Architecture
 
 ```mermaid
 graph TB
@@ -100,9 +102,9 @@ graph TB
 
 ---
 
-## Data Flow
+### Data Flow
 
-### Initialization — on every page load
+#### Initialization — on every page load
 
 ```mermaid
 graph LR
@@ -122,7 +124,7 @@ graph LR
     D -->|"read"| LS
 ```
 
-### Read path — rendering
+#### Read path — rendering
 
 ```mermaid
 graph LR
@@ -137,7 +139,7 @@ graph LR
     S --> F --> L
 ```
 
-### Write path — mutations
+#### Write path — mutations
 
 ```mermaid
 graph LR
