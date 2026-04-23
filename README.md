@@ -25,31 +25,6 @@ Instead of traditional coding, this PoC was built using an Agentic Workflow. The
 
 ---
 
-## Tech Stack
-
-| Layer | Technology |
-|-------|------------|
-| Framework | React 19 + Vite 8 |
-| Language | TypeScript |
-| Styling | Tailwind CSS v4 |
-| Charts | Recharts |
-| Storage | localStorage (browser-native) |
-| Deployment | GitHub Pages |
-
----
-
-## Features
-
-- Add, edit, and delete expenses with date, amount, category, and description
-- Six categories: Food, Transportation, Entertainment, Shopping, Bills, Other
-- Filter and search by date range, category, and keyword — all criteria combined with AND logic
-- Dashboard with all-time total, current month total, spending-over-time bar chart, and category breakdown
-- Recurring expenses with Weekly / Monthly / Annual frequencies — overdue instances auto-generated on every page load
-- CSV export of the full expense history with a date-stamped filename
-- Demo data auto-seeded on first visit so new users land on a populated dashboard
-
----
-
 ## Section 2: System Architecture & Data Flow
 
 This section visualizes the structural integrity and data handling of the application. The architecture was orchestrated using SOLID principles to ensure the codebase remains modular, easy to audit, and resistant to regression during updates.
@@ -157,6 +132,31 @@ graph LR
     C -->|"write"| LS
     D -->|"read"| LS
 ```
+
+---
+
+## Tech Stack
+
+| Layer | Technology |
+|-------|------------|
+| Framework | React 19 + Vite 8 |
+| Language | TypeScript |
+| Styling | Tailwind CSS v4 |
+| Charts | Recharts |
+| Storage | localStorage (browser-native) |
+| Deployment | GitHub Pages |
+
+---
+
+## Features
+
+- Add, edit, and delete expenses with date, amount, category, and description
+- Six categories: Food, Transportation, Entertainment, Shopping, Bills, Other
+- Filter and search by date range, category, and keyword — all criteria combined with AND logic
+- Dashboard with all-time total, current month total, spending-over-time bar chart, and category breakdown
+- Recurring expenses with Weekly / Monthly / Annual frequencies — overdue instances auto-generated on every page load
+- CSV export of the full expense history with a date-stamped filename
+- Demo data auto-seeded on first visit so new users land on a populated dashboard
 
 ---
 
