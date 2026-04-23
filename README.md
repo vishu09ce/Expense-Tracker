@@ -11,6 +11,20 @@ The goal of this PoC is to showcase a modernized approach to the Software Develo
 
 ---
 
+## Section 1: AI-Assisted Workflow
+
+Instead of traditional coding, this PoC was built using an Agentic Workflow. The process focused on high-level architectural prompts and rigorous human oversight to ensure compliance.
+
+### Key Performance Drivers
+
+**Accelerated Time-to-Market:** Leveraged Claude Code to rapidly scaffold state management and UI components, significantly compressing the development lifecycle without sacrificing architectural integrity.
+
+**Enhanced Code Quality:** Utilized AI-driven refactoring to identify and resolve technical debt in real-time, ensuring a modular, type-safe codebase (TypeScript) that meets enterprise standards.
+
+**Increased Coverage:** Streamlined the generation of comprehensive test cases and technical summaries, allowing for a more robust validation of edge cases than traditional manual methods.
+
+---
+
 ## Tech Stack
 
 | Layer | Technology |
