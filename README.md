@@ -202,4 +202,5 @@ Runs `npm run build` then publishes `dist/` to the `gh-pages` branch via the `gh
 | Document | Description |
 |----------|-------------|
 | [RTM.md](RTM.md) | Requirements Traceability Matrix — all 53 requirements with test results |
+| [docs/TESTING_STRATEGY.md](docs/TESTING_STRATEGY.md) | Testing strategy — risk classification, test types, quality gates |
 | [docs/COMPONENT_TREE.md](docs/COMPONENT_TREE.md) | Full React component tree with props and responsibilities |
