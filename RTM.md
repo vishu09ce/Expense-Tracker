@@ -1,13 +1,13 @@
 # Expense Tracker
 ## Requirements Traceability Matrix (RTM)
 
-**Version:** 1.0
+**Version:** 1.1
 **Status:** Approved
 **Source Requirements Doc:** v1.0 (Approved)
 **Source Testing Strategy:** v1.0 (Approved)
 **Tested By:** Claude Code (claude-sonnet-4-6)
-**Test Date:** 2026-04-22
-**Test Method:** Code-path tracing against each acceptance criterion + dev-server verification (http://localhost:5173)
+**Test Date:** 2026-04-22 (v1.0 — functional + NFR) · 2026-04-23 (v1.1 — deployment)
+**Test Method:** Code-path tracing against each acceptance criterion + dev-server verification (http://localhost:5173) · Live deployment verification (https://vishu09ce.github.io/Expense-Tracker/)
 
 ---
 
@@ -153,6 +153,44 @@
 
 ---
 
+## 5.1 Deployment Infrastructure
+
+| Req ID | Intended Use | Risk | Test Type | Test Case | Acceptance Criterion | Result |
+|--------|-------------|------|-----------|-----------|----------------------|--------|
+| DEP-01 | Confirms the app is publicly accessible at its GitHub Pages URL | NHPR | Smoke | Navigate to https://vishu09ce.github.io/Expense-Tracker/ — GitHub serves the gh-pages branch; React mounts into div#root | HTTP 200 response; React app mounts and renders — no blank screen or 404 | **Pass** |
+| DEP-02 | Ensures all static assets resolve correctly under the GitHub Pages sub-path | NHPR | Smoke | vite.config.ts sets base: '/Expense-Tracker/'; dist/index.html script src and link href verified to begin with /Expense-Tracker/assets/ | All JS and CSS assets served from /Expense-Tracker/assets/ with no 404s in browser Network tab | **Pass** |
+| DEP-03 | Ensures all traffic is encrypted in transit | NHPR | Smoke | GitHub Pages enforces HTTPS by platform policy; no http:// asset references in built output | App served exclusively over HTTPS; valid TLS certificate; no mixed-content warnings | **Pass** |
+
+---
+
+## 5.2 Demo Data & First Visit Experience
+
+| Req ID | Intended Use | Risk | Test Type | Test Case | Acceptance Criterion | Result |
+|--------|-------------|------|-----------|-----------|----------------------|--------|
+| DEP-04 | Ensures portfolio visitors land on a fully populated app rather than an empty state | NHPR | E2E | Open app with no existing localStorage for the origin; autoSeedIfFirstVisit checks DEMO_SEEDED_KEY (absent) and expense count (0) → calls storageService.saveAll(SEED_EXPENSES) → sets DEMO_SEEDED_KEY and DEMO_ACTIVE_KEY | Dashboard populated with 6 months of expenses; summary cards, bar chart, and category breakdown all render with data | **Pass** |
+| DEP-05 | Confirms recurring auto-generation runs correctly on the seeded dataset | NHPR | E2E | processRecurringExpenses runs immediately after autoSeedIfFirstVisit in the useExpenses initialiser; weekly coffee shop template (nextOccurrence: 2026-04-08, past date) generates all overdue instances up to today | Auto-generated recurring instances visible in expense list; coffee shop template nextOccurrence advanced past today | **Pass** |
+| DEP-06 | Prevents the app from overwriting user data with demo data on every subsequent load | NHPR | E2E | DEMO_SEEDED_KEY persisted in localStorage after first seed; autoSeedIfFirstVisit returns immediately on all subsequent loads; second guard (getAll().length > 0) also prevents overwrite if data exists without the flag | Refreshing or revisiting the page does not re-seed; any user-added expenses preserved across page loads | **Pass** |
+
+---
+
+## 5.3 Demo Banner
+
+| Req ID | Intended Use | Risk | Test Type | Test Case | Acceptance Criterion | Result |
+|--------|-------------|------|-----------|-----------|----------------------|--------|
+| DEP-07 | Informs visitors they are viewing demo data so they are not confused about data ownership | NHPR | E2E | DEMO_ACTIVE_KEY = '1' set alongside seed; App.tsx initialises showDemoBanner from localStorage.getItem(DEMO_ACTIVE_KEY); amber banner rendered between sticky header and main content area | Banner visible on first visit containing demo data messaging with "Clear & Start Fresh" and dismiss (×) controls | **Pass** |
+| DEP-08 | Allows visitors to dismiss the banner without losing the demo data they are exploring | NHPR | E2E | × button calls setShowDemoBanner(false) — React state only; no localStorage writes; DEMO_ACTIVE_KEY and expense data unchanged | Banner disappears immediately on dismiss; demo expenses intact; banner does not reappear within the same session | **Pass** |
+| DEP-09 | Provides a one-click path for visitors to wipe demo data and start using the app with their own expenses | NHPR | E2E | clearDemoData() calls storageService.saveAll([]) + localStorage.removeItem(DEMO_ACTIVE_KEY) + window.location.reload(); DEMO_SEEDED_KEY preserved so auto-seed never runs again | All expenses cleared; banner absent after reload; subsequent page loads start with empty state and no banner | **Pass** |
+
+---
+
+## 5.4 Page Identity
+
+| Req ID | Intended Use | Risk | Test Type | Test Case | Acceptance Criterion | Result |
+|--------|-------------|------|-----------|-----------|----------------------|--------|
+| DEP-10 | Ensures the browser tab and search engine results display a meaningful app name | NHPR | Smoke | index.html `<title>` updated to "Expense Tracker"; verified in dist/index.html after production build | Browser tab displays "Expense Tracker"; placeholder "expense-tracker-temp" absent from built output | **Pass** |
+
+---
+
 ## RTM Completion Status
 
 | Category | Total | Tested | Passed | Failed | Remaining |
@@ -168,7 +206,11 @@
 | Accessibility (NFR-08–11) | 4 | 4 | 4 | 0 | 0 |
 | Browser Compatibility (NFR-12–13) | 2 | 1 | 1 | 0 | 0 |
 | Theme & Display (NFR-14–15) | 2 | 2 | 2 | 0 | 0 |
-| **TOTAL** | **44** | **43** | **43** | **0** | **0** |
+| Deployment Infrastructure (DEP-01–03) | 3 | 3 | 3 | 0 | 0 |
+| Demo Data & First Visit (DEP-04–06) | 3 | 3 | 3 | 0 | 0 |
+| Demo Banner (DEP-07–09) | 3 | 3 | 3 | 0 | 0 |
+| Page Identity (DEP-10) | 1 | 1 | 1 | 0 | 0 |
+| **TOTAL** | **54** | **53** | **53** | **0** | **0** |
 
 *NFR-13 is N/A — IE explicitly out of scope per requirements document.*
 
@@ -176,11 +218,12 @@
 
 ## Quality Gate Checklist
 
-- [x] All 43 testable requirements have a recorded Result
+- [x] All 53 testable requirements have a recorded Result
 - [x] No HPR requirement has a Fail result
 - [x] All Critical and Major defects resolved and re-verified *(no defects found)*
 - [x] All Minor defects resolved and re-verified *(no defects found)*
-- [x] RTM reviewed and signed off by Product Owner (Vashishth) — approved 2026-04-22
+- [x] All 10 deployment requirements verified against live GitHub Pages URL (https://vishu09ce.github.io/Expense-Tracker/)
+- [x] RTM reviewed and signed off by Product Owner (Vashishth) — v1.0 approved 2026-04-22 · v1.1 deployment section approved 2026-04-23
 
 ---
 
@@ -190,6 +233,9 @@ No defects found during testing. All 43 requirements passed on first verificatio
 
 ---
 
-*Testing completed by Claude Code (claude-sonnet-4-6) on 2026-04-22.*
+*v1.0 testing completed by Claude Code (claude-sonnet-4-6) on 2026-04-22.*
 *Method: Code-path tracing of each acceptance criterion through source implementation + dev server availability check.*
 *All HPR requirements verified by tracing execution through: ExpenseForm → useExpenses hook → LocalStorageService → localStorage, and return path.*
+
+*v1.1 deployment testing completed by Claude Code (claude-sonnet-4-6) on 2026-04-23.*
+*Method: Live verification against https://vishu09ce.github.io/Expense-Tracker/ + dist/index.html asset path inspection + code-path tracing for demo seed and banner logic.*
