@@ -149,6 +149,34 @@ This section outlines the strategic selection of the technology stack. The focus
 
 ---
 
+## Section 4: Risk-Based Quality Assurance (RBQA)
+
+This section defines the framework used to ensure the application is "fit for purpose." By applying Risk-Based Assurance, verification effort is concentrated where the impact of failure is highest.
+
+### Risk-Based Classification
+
+Requirements are stratified by their impact on Data Integrity and Regulatory Compliance as defined in the Testing Strategy:
+
+- **High Process Risk (HPR):** Critical logic (financial calculations, data persistence). Validated via Scripted Testing with formal evidence.
+- **Low Process Risk (LPR):** UI/UX and aesthetic elements. Verified via Unscripted / Exploratory Testing due to high detectability.
+
+### Agentic Verification Loop
+
+- **AI-Generated, Human-Verified:** Claude Code orchestrates the test suites, which are then manually audited to ensure absolute GxP alignment.
+- **Robustness Testing:** Explicit focus on "Edge-Case Stressing" to ensure the system maintains data integrity under invalid inputs.
+
+### Audit-Ready Traceability
+
+The Requirements Traceability Matrix (RTM) serves as the final evidence of the Testing Strategy. It provides the objective proof required for a "validated state" by:
+
+- **Deriving Proof:** Directly mapping every business requirement to its specific test execution and outcome.
+- **Closing the Loop:** Ensuring 100% coverage of HPR items before release, creating a defensible record for regulatory review.
+
+1. [View Testing Strategy](docs/TESTING_STRATEGY.md)
+2. [View Requirements Traceability Matrix (RTM)](RTM.md)
+
+---
+
 ## Tech Stack
 
 | Layer | Technology |
