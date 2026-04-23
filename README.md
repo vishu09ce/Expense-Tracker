@@ -1,6 +1,11 @@
-# Expense Tracker
+# Expense-Tracker PoC
+## Claude Code Development for Regulated Workflows Utilizing Risk-Based Validation
 
-A personal expense tracking SPA built with React, TypeScript, and Tailwind CSS. Add and manage expenses, visualise spending trends, automate recurring costs, and export to CSV.
+---
+
+## Executive Summary
+
+The goal of this PoC is to showcase a modernized approach to the Software Development Life Cycle. By leveraging Claude Code to drive a fast-paced Agile environment, this project demonstrates how simple business processes—like expense tracking—can be executed under a rigorous Risk-Based Validation model. It acts as a blueprint for AI-assisted workflows, proving that cutting-edge validation standards can be maintained within a high-speed, automated development pipeline.
 
 **Live demo:** https://vishu09ce.github.io/Expense-Tracker/
 
