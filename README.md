@@ -135,6 +135,20 @@ graph LR
 
 ---
 
+## Section 3: Technical Implementation
+
+This section outlines the strategic selection of the technology stack. The focus was on choosing tools that provide the highest Return on Investment (ROI), long-term Stability, and seamless compatibility with AI-Assisted Workflows.
+
+| Technology | Business Rationale |
+|------------|-------------------|
+| Vite & React | Chosen for rapid development velocity and a highly responsive User Experience (UX). |
+| TypeScript | Implemented to enforce strict type-safety, reducing production errors and enhancing "Auditability" of the logic. |
+| Recharts | Leveraged for modular, data-driven visualizations that provide immediate operational insights. |
+| LocalStorage | Utilized for lightweight, client-side persistence to ensure data continuity without infrastructure overhead. |
+| Tailwind CSS | Utilized for a standardized, enterprise-grade UI framework that minimizes custom CSS technical debt. |
+
+---
+
 ## Tech Stack
 
 | Layer | Technology |
