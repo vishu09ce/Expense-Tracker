@@ -172,9 +172,6 @@ The Requirements Traceability Matrix (RTM) serves as the final evidence of the T
 - **Deriving Proof:** Directly mapping every business requirement to its specific test execution and outcome.
 - **Closing the Loop:** Ensuring 100% coverage of HPR items before release, creating a defensible record for regulatory review.
 
-1. [View Testing Strategy](docs/TESTING_STRATEGY.md)
-2. [View Requirements Traceability Matrix (RTM)](RTM.md)
-
 ---
 
 ## Section 5: Project Documentation
