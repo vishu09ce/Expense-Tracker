@@ -1,9 +1,11 @@
 /**
- * seedData.ts — Test data and seeding utilities for RTM verification.
+ * seedData.ts — Demo data, first-visit seeding, and dev testing utilities.
  *
- * Provides a realistic 6-month expense history that covers every requirement
- * in the RTM so testers can verify each acceptance criterion without manually
- * entering data.
+ * Provides a realistic 6-month expense history used in two ways:
+ *   1. Production — auto-seeded on first visit so new users see a fully
+ *      populated dashboard instead of an empty state (see autoSeedIfFirstVisit).
+ *   2. Development — the DEV toolbar in App.tsx exposes manual seed/clear
+ *      buttons for RTM verification without needing to manually enter data.
  *
  * Coverage by requirement group:
  *   FR-01–07  All field types: required fields, optional description, decimal amounts
@@ -18,15 +20,25 @@
  *               - Annual car insurance  (nextOccurrence in future)
  *               - Weekly coffee shop    (nextOccurrence in the PAST → tests FR-25
  *                 auto-generation on first app load after seeding)
- *
- * This file is imported only in development builds via App.tsx's
- * import.meta.env.DEV guard and is excluded from the production bundle.
  */
 
 import { v4 as uuidv4 } from 'uuid';
 import type { Expense } from '../types';
 import { Category, Frequency } from '../types';
+import type { IStorageService } from '../services';
 import { storageService } from '../services';
+
+/**
+ * Permanent flag — set once after the first auto-seed so the app never
+ * re-seeds even if the user later deletes all their own expenses.
+ */
+export const DEMO_SEEDED_KEY = 'expense_tracker_seeded';
+
+/**
+ * Session flag — set alongside DEMO_SEEDED_KEY and cleared when the user
+ * clicks "Clear & Start Fresh". Drives the demo banner visibility.
+ */
+export const DEMO_ACTIVE_KEY = 'expense_tracker_demo_active';
 
 /**
  * Build a complete Expense object from the minimum required fields.
@@ -145,6 +157,35 @@ export const SEED_EXPENSES: Expense[] = [
     nextOccurrence: '2026-04-08', // PAST — triggers FR-25 auto-generation on load
   }),
 ];
+
+/**
+ * Seed demo data on the very first visit.
+ * DEMO_SEEDED_KEY is set permanently so this never runs twice — even if the
+ * user deletes all their expenses, they will not be re-seeded on the next load.
+ * Returns true when seeding happened so the caller can show a welcome banner.
+ */
+export function autoSeedIfFirstVisit(storage: IStorageService): boolean {
+  if (localStorage.getItem(DEMO_SEEDED_KEY)) return false;
+  // Don't overwrite data that existed before this feature was introduced
+  if (storage.getAll().length > 0) {
+    localStorage.setItem(DEMO_SEEDED_KEY, '1');
+    return false;
+  }
+  storage.saveAll(SEED_EXPENSES);
+  localStorage.setItem(DEMO_SEEDED_KEY, '1');
+  localStorage.setItem(DEMO_ACTIVE_KEY, '1');
+  return true;
+}
+
+/**
+ * Clear all expense data and the demo-active flag, then reload.
+ * DEMO_SEEDED_KEY is intentionally preserved so auto-seeding never runs again.
+ */
+export function clearDemoData(): void {
+  storageService.saveAll([]);
+  localStorage.removeItem(DEMO_ACTIVE_KEY);
+  window.location.reload();
+}
 
 /**
  * Write the full test dataset to localStorage and reload the page.

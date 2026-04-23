@@ -14,6 +14,7 @@ import { useState, useCallback } from 'react';
 import type { Expense, CreateExpenseInput, UpdateExpenseInput, ExpenseFilters } from '../types';
 import { storageService } from '../services';
 import { processRecurringExpenses } from '../utils/recurringUtils';
+import { autoSeedIfFirstVisit } from '../utils/seedData';
 
 export function useExpenses() {
   /**
@@ -25,6 +26,7 @@ export function useExpenses() {
    * getAll() to return — no extra re-render or useEffect is needed.
    */
   const [expenses, setExpenses] = useState<Expense[]>(() => {
+    autoSeedIfFirstVisit(storageService);     // populate demo data on first visit
     processRecurringExpenses(storageService); // generate overdue instances in-place
     return storageService.getAll();
   });

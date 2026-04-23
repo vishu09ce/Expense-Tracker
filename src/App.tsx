@@ -20,11 +20,7 @@ import { FilterPanel } from './components/filters';
 import { Dashboard } from './components/dashboard';
 import { exportExpensesToCSV } from './utils';
 
-/*
- * Dev-only imports — tree-shaken out of the production bundle because the
- * import.meta.env.DEV guard evaluates to false at build time.
- */
-import { seedTestData, clearAllData } from './utils/seedData';
+import { seedTestData, clearAllData, clearDemoData, DEMO_ACTIVE_KEY } from './utils/seedData';
 
 /** The two top-level views in the application. */
 type ActiveView = 'dashboard' | 'expenses';
@@ -43,6 +39,11 @@ function App() {
 
   // Expense staged for deletion — drives the confirmation dialog (FR-03)
   const [deletingExpense, setDeletingExpense] = useState<Expense | null>(null);
+
+  // Show the demo banner while the auto-seeded data is still active
+  const [showDemoBanner, setShowDemoBanner] = useState(
+    () => localStorage.getItem(DEMO_ACTIVE_KEY) === '1'
+  );
 
   /** Apply filters only when at least one is active — avoids an unnecessary array pass. */
   const displayedExpenses = hasActiveFilters
@@ -146,6 +147,34 @@ function App() {
           </nav>
         </div>
       </header>
+
+      {/* ── Demo data banner — visible until user clears or dismisses ── */}
+      {showDemoBanner && (
+        <div className="bg-amber-50 border-b border-amber-200">
+          <div className="max-w-5xl mx-auto px-4 sm:px-6 py-2 flex items-center justify-between">
+            <p className="text-sm text-amber-800">
+              You're viewing <strong>demo data</strong> — explore freely, then start fresh when you're ready.
+            </p>
+            <div className="flex items-center gap-2 ml-4 shrink-0">
+              <button
+                onClick={clearDemoData}
+                className="text-xs font-medium px-3 py-1 bg-amber-500 text-white rounded
+                  hover:bg-amber-600 transition-colors focus:outline-none focus:ring-2 focus:ring-amber-400"
+              >
+                Clear &amp; Start Fresh
+              </button>
+              <button
+                onClick={() => setShowDemoBanner(false)}
+                aria-label="Dismiss demo banner"
+                className="text-amber-500 hover:text-amber-700 transition-colors text-lg leading-none
+                  focus:outline-none focus:ring-2 focus:ring-amber-400 rounded"
+              >
+                ×
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* ── Main content area ── */}
       <main className="max-w-5xl mx-auto px-4 sm:px-6 py-8">
